@@ -47,6 +47,16 @@ export const WebSearchRequestSchema = Schema.Struct({
     title: "Time Range Filter"
   })),
   
+  /** Control content size (medium or high) */
+  content_size: Schema.optional(Schema.Literal("medium", "high").annotations({
+    description: "Control the number of words in the web page summary; default value is medium - medium: balanced mode, 400-600 words; high: maximize context, 2500 words"
+  })),
+  
+  /** User location for region-specific results */
+  location: Schema.optional(Schema.Literal("cn", "us").annotations({
+    description: "Guess which region the user is from based on user input. Default is cn (Chinese region). Available: cn (Chinese region), us (non-Chinese region)"
+  })),
+  
   /** User-provided unique identifier for distinguishing requests */
   request_id: Schema.optional(Schema.String.annotations({
     description: "User-provided unique identifier for distinguishing requests"
