@@ -1,56 +1,46 @@
-import { Schema } from "effect";
+import * as Schema from "effect/Schema";
 
 /**
- * Common error schemas used across all services
+ * Base error for all network-related failures
  */
-
-// Configuration errors (missing/invalid environment variables)
-export class ConfigError extends Schema.TaggedError<ConfigError>()("ConfigError", {
-  message: Schema.String,
-  field: Schema.String.pipe(Schema.optional),
-}) {}
-
-// Network/transport errors (DNS, connection, timeout)
 export class NetworkError extends Schema.TaggedError<NetworkError>()("NetworkError", {
   message: Schema.String,
   endpoint: Schema.String,
-  cause: Schema.Unknown.pipe(Schema.optional),
+  cause: Schema.Unknown
 }) {}
 
-// API errors (4xx, 5xx responses from Z.AI API)
+/**
+ * Base error for all API-related failures
+ */
 export class ApiError extends Schema.TaggedError<ApiError>()("ApiError", {
-  code: Schema.Int,
+  code: Schema.String,
   message: Schema.String,
-  endpoint: Schema.String,
+  endpoint: Schema.String
 }) {}
 
-// Schema validation errors (invalid input/output data)
+/**
+ * Error for failed schema validation
+ */
 export class ValidationError extends Schema.TaggedError<ValidationError>()("ValidationError", {
   message: Schema.String,
-  path: Schema.String,
-  value: Schema.Unknown.pipe(Schema.optional),
+  field: Schema.String,
+  received: Schema.Unknown
 }) {}
 
-// Union type for all possible errors in our system
-export const ZaiError = Schema.Union(
-  ConfigError,
-  NetworkError,
-  ApiError,
-  ValidationError
-);
+/**
+ * Error for configuration failures
+ */
+export class ConfigError extends Schema.TaggedError<ConfigError>()("ConfigError", {
+  message: Schema.String,
+  key: Schema.String
+}) {}
 
-// Helper function to format error messages for MCP clients
-export const formatErrorMessage = (error: ConfigError | NetworkError | ApiError | ValidationError): string => {
-  switch (error._tag) {
-    case "ConfigError":
-      return `Configuration Error: ${error.message}`;
-    case "NetworkError":
-      return `Network Error: ${error.message} (endpoint: ${error.endpoint})`;
-    case "ApiError":
-      return `API Error (code ${error.code}): ${error.message}`;
-    case "ValidationError":
-      return `Validation Error at ${error.path}: ${error.message}`;
-    default:
-      return `Unknown Error: ${JSON.stringify(error)}`;
-  }
-};
+/**
+ * Standard API error response format
+ */
+export const ApiErrorResponseSchema = Schema.Struct({
+  code: Schema.String,
+  message: Schema.String
+});
+
+export type ApiErrorResponse = typeof ApiErrorResponseSchema.Type;
