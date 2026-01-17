@@ -1,0 +1,26 @@
+logLevel = "debug" # "debug" | "warn" | "error"
+telemetry = false
+
+[test]
+root = "./__tests__"
+coverage = false
+
+
+[install.lockfile]
+save = true
+
+
+[run]
+# default outside of Windows
+shell = "system"
+# equivalent to `bun --bun` for all `bun run` commands
+bun = true
+silent = true
+
+
+[install]
+exact = true
+optional = true
+dev = true
+peer = true
+auto = "auto"
