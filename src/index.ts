@@ -2,177 +2,203 @@
  * Z.AI MCP Server - Entry Point
  *
  * Main server file that launches the MCP server with stdio transport
- * Exposes three tools: webSearchPrime, webReader, zread
+ * Currently exposes webSearchPrime tool
  */
 
-import { McpServer, Tool, Toolkit } from "@effect/ai";
+import * as Effect from "effect/Effect";
+import * as Layer from "effect/Layer";
+import * as Schema from "effect/Schema";
+import * as McpServer from "@effect/ai/McpServer";
+import * as Tool from "@effect/ai/Tool";
+import * as Toolkit from "@effect/ai/Toolkit";
 import { BunRuntime, BunSink, BunStream } from "@effect/platform-bun";
-import { Effect, Layer, Logger, Option, Schema } from "effect";
+import * as Logger from "effect/Logger";
+import * as Option from "effect/Option";
 
-// Import services and tools
-import {
-	WebSearchService,
-	WebSearchServiceLayer,
-} from "./services/web-search.js";
-import {
-	type WebSearchToolInputSchema,
-	WebSearchToolOutputSchema,
-} from "./tools/web-search.js";
+// Import services
+import { WebSearchService } from "./services/web-search.js";
+import { NetworkError, ApiError } from "./schemas/common.js";
 
 // =============================================================================
-// Tool Definition: webSearchPrime
+// Error Schemas for Tool Output
+// =============================================================================
+
+const ToolNetworkErrorSchema = Schema.Struct({
+  _tag: Schema.Literal("NetworkError"),
+  message: Schema.String,
+  endpoint: Schema.String,
+});
+
+
+const ToolApiErrorSchema = Schema.Struct({
+  _tag: Schema.Literal("ApiError"),
+  message: Schema.String,
+  code: Schema.String,
+  endpoint: Schema.String,
+});
+
+const ToolErrorSchema = Schema.Union(ToolNetworkErrorSchema, ToolApiErrorSchema);
+
+// =============================================================================
+// Tool Definitions
 // =============================================================================
 
 /**
  * Create MCP Tool for web search
- * This defines the tool interface that will be exposed to LLMs
- *
- * Uses failureMode: "return" so that NetworkError and ApiError from the service
- * are automatically captured by the Toolkit and returned in the result.
- *
- * IMPORTANT: With failureMode: "return", we must define both success and failure schemas.
- * The Toolkit will automatically handle errors and wrap them using the failure schema.
+ * Uses failureMode: "return" - errors are wrapped in result object
+ * Handlers CAN have dependencies with this mode
  */
 const WebSearchTool = Tool.make("webSearchPrime", {
-	description:
-		"Perform web search using Z.AI premium search engine. Returns structured results with titles, URLs, summaries, and metadata for each webpage.",
-	parameters: {
-		search_query: Schema.String.annotations({
-			description:
-				"Content to be searched, recommended not to exceed 70 characters",
-		}),
-		search_domain_filter: Schema.optional(
-			Schema.String.annotations({
-				description:
-					"Limit search results to specific domain, e.g., www.example.com",
-			}),
-		),
-		search_recency_filter: Schema.optional(
-			Schema.Literal(
-				"oneDay",
-				"oneWeek",
-				"oneMonth",
-				"oneYear",
-				"noLimit",
-			).annotations({
-				description:
-					"Search for web pages within a specified time range. Default is noLimit. Available: oneDay, oneWeek, oneMonth, oneYear, noLimit",
-			}),
-		),
-		content_size: Schema.optional(
-			Schema.Literal("medium", "high").annotations({
-				description:
-					"Control the number of words in the web page summary; default is medium - medium: balanced mode, 400-600 words; high: maximize context, 2500 words",
-			}),
-		),
-		location: Schema.optional(
-			Schema.Literal("cn", "us").annotations({
-				description:
-					"Guess which region the user is from based on user input. Default is cn (Chinese region). Available: cn (Chinese region), us (non-Chinese region)",
-			}),
-		),
-	},
-	success: WebSearchToolOutputSchema,
-	failure: Schema.Struct({
-		_tag: Schema.String,
-		message: Schema.String,
-	}),
-	failureMode: "return",
+  dependencies: [WebSearchService],
+  description:
+    "Perform web search using Z.AI premium search engine. Returns structured results with titles, URLs, summaries, and metadata for each webpage.",
+  parameters: {
+    search_query: Schema.String.annotations({
+      description: "Content to be searched, recommended not to exceed 70 characters",
+    }),
+    search_domain_filter: Schema.optional(
+      Schema.String.annotations({
+        description: "Limit search results to specific domain, e.g., www.example.com",
+      })
+    ),
+    search_recency_filter: Schema.optional(
+      Schema.Literal("oneDay", "oneWeek", "oneMonth", "oneYear", "noLimit").annotations({
+        description:
+          "Search for web pages within a specified time range. Default is noLimit. Available: oneDay, oneWeek, oneMonth, oneYear, noLimit",
+      })
+    ),
+    content_size: Schema.optional(
+      Schema.Literal("medium", "high").annotations({
+        description:
+          "Control the number of words in the web page summary; default is medium - medium: balanced mode, 400-600 words; high: maximize context, 2500 words",
+      })
+    ),
+    location: Schema.optional(
+      Schema.Literal("cn", "us").annotations({
+        description:
+          "Guess which region the user is from based on user input. Default is cn (Chinese region). Available: cn (Chinese region), us (non-Chinese region)",
+      })
+    ),
+  },
+  success: Schema.Struct({
+    id: Schema.String.annotations({ description: "Task ID for the search request" }),
+    result_count: Schema.Number.annotations({ description: "Number of search results returned" }),
+    results: Schema.Array(
+      Schema.Struct({
+        index: Schema.Number.annotations({ description: "Result index" }),
+        title: Schema.String.annotations({ description: "Page title" }),
+        url: Schema.String.annotations({ description: "Page URL" }),
+        summary: Schema.String.annotations({ description: "Content summary" }),
+        website: Schema.String.annotations({ description: "Website name" }),
+        icon: Schema.String.annotations({ description: "Website icon URL" }),
+        publish_date: Schema.optional(Schema.String.annotations({ description: "Publication date" })),
+      })
+    ).annotations({ description: "Formatted search results" }),
+  }),
+  failure: ToolErrorSchema,
+  failureMode: "return",
 });
+
+// =============================================================================
+// Tool Handlers
+// =============================================================================
 
 /**
  * Create handler for webSearchPrime tool
- * Handler receives parameters and returns Effect with result
  *
- * IMPORTANT: With failureMode: "return", we don't need to catch errors here!
- * The Toolkit will automatically handle errors and wrap them in the result.
- *
- * The handler simply returns the transformed response on success.
- * If WebSearchService.search fails with NetworkError|ApiError, Toolkit catches it.
+ * With failureMode: "return":
+ * - Handlers CAN have dependencies (WebSearchService)
+ * - Errors are caught and converted to the failure schema
+ * - Returns Effect<Success | Failure, never, Requirements>
  */
-const WebSearchToolHandler = (params: typeof WebSearchToolInputSchema.Type) =>
-	Effect.gen(function* () {
-		// Get the WebSearchService from context
-		const webSearchService = yield* WebSearchService;
+const WebSearchToolHandler = (
+  params: {
+    readonly search_query: string;
+    readonly search_domain_filter?: string;
+    readonly search_recency_filter?: "oneDay" | "oneWeek" | "oneMonth" | "oneYear" | "noLimit";
+    readonly content_size?: "medium" | "high";
+    readonly location?: "cn" | "us";
+  }
+) =>
+  Effect.gen(function* () {
+    // Get the WebSearchService from context
+    const webSearchService = yield* WebSearchService;
 
-		// Call the service (may fail with NetworkError or ApiError)
-		const response = yield* webSearchService.search({
-			search_query: params.search_query,
-			count: Option.none(),
-			search_domain_filter: params.search_domain_filter,
-			search_recency_filter: params.search_recency_filter,
-		});
+    // Call the service - errors will be caught by Toolkit
+    const response = yield* webSearchService.search({
+      search_query: params.search_query,
+      count: Option.none(),
+      search_domain_filter: params.search_domain_filter,
+      search_recency_filter: params.search_recency_filter,
+      content_size: params.content_size,
+      location: params.location,
+    });
 
-		// Transform response to output format
-		return {
-			id: response.id,
-			result_count: response.search_result.length,
-			results: response.search_result.map(
-				(r: (typeof response.search_result)[number], idx: number) => ({
-					index: idx + 1,
-					title: r.title,
-					url: r.link,
-					summary: r.content,
-					website: r.media,
-					icon: r.icon,
-					publish_date: r.publish_date,
-				}),
-			),
-		};
-	});
+    // Transform API response to tool output format
+    return {
+      id: response.id,
+      result_count: response.search_result.length,
+      results: response.search_result.map((r, idx) => ({
+        index: idx + 1,
+        title: r.title,
+        url: r.link,
+        summary: r.content,
+        website: r.media,
+        icon: r.icon,
+        publish_date: r.publish_date,
+      })),
+    };
+  }).pipe(
+    // Convert service errors to tool error schema format
+    Effect.catchTags({
+      NetworkError: (error) =>
+        Effect.succeed({
+          _tag: "NetworkError" as const,
+          message: error.message,
+          endpoint: error.endpoint,
+        } as const),
+      ApiError: (error) =>
+        Effect.succeed({
+          _tag: "ApiError" as const,
+          message: error.message,
+          code: error.code,
+          endpoint: error.endpoint,
+        } as const),
+    })
+  );
 
 // =============================================================================
 // Toolkit Creation
 // =============================================================================
 
-/**
- * Create toolkit containing webSearchPrime tool
- * Toolkit groups multiple tools together for the MCP server
- */
 const ZaiToolkit = Toolkit.make(WebSearchTool);
 
-/**
- * Create handlers layer
- * This layer provides the implementation for each tool in the toolkit
- */
 const ZaiHandlers = ZaiToolkit.toLayer(
-	Effect.succeed({
-		webSearchPrime: WebSearchToolHandler,
-	}),
+  Effect.succeed({
+    webSearchPrime: WebSearchToolHandler,
+  })
 );
 
 // =============================================================================
 // Server Layer Composition
 // =============================================================================
 
-/**
- * Main server layer composition
- * Combines:
- * 1. Service layers (WebSearchService, HTTP client, Config)
- * 2. MCP Server layer with stdio transport
- * 3. Handlers layer
- * 4. Logging
- */
 const MainLayer = Layer.mergeAll(McpServer.toolkit(ZaiToolkit)).pipe(
-	Layer.provide(ZaiHandlers),
-	Layer.provide(WebSearchServiceLayer),
-	Layer.provide(
-		McpServer.layerStdio({
-			name: "Z.AI MCP Server",
-			version: "1.0.0",
-			stdin: BunStream.stdin,
-			stdout: BunSink.stdout,
-		}),
-	),
-	Layer.provide(Logger.add(Logger.prettyLogger({ stderr: true }))),
+  Layer.provide(ZaiHandlers),
+  Layer.provide(WebSearchService.Default),
+  Layer.provide(
+    McpServer.layerStdio({
+      name: "Z.AI MCP Server",
+      version: "1.0.0",
+      stdin: BunStream.stdin,
+      stdout: BunSink.stdout,
+    })
+  ),
+  Layer.provide(Logger.add(Logger.prettyLogger({ stderr: true })))
 );
 
 // =============================================================================
 // Server Launch
 // =============================================================================
 
-/**
- * Launch the MCP server
- * This starts the server and begins listening for stdin/stdout communication
- */
 Layer.launch(MainLayer).pipe(BunRuntime.runMain);
