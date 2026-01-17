@@ -13,7 +13,7 @@ export const { NetworkError, ApiError, ApiErrorResponseSchema } = CommonSchema;
  * Handles authentication, base URL, and error mapping
  */
 export class ZaiHttpClient extends Effect.Service<ZaiHttpClient>()("ZaiHttpClient", {
-  dependencies: [ZaiConfigService],
+  dependencies: [ZaiConfigService.Default],
   effect: Effect.gen(function* () {
     const config = yield* ZaiConfigService;
     const apiKey = Redacted.value(config.apiKey);
@@ -60,7 +60,7 @@ export class ZaiHttpClient extends Effect.Service<ZaiHttpClient>()("ZaiHttpClien
               Effect.catchAll(() =>
                 Effect.succeed({
                   code: String(response.status),
-                  message: response.statusText
+                  message: `HTTP ${response.status}`
                 } as const)
               ),
               Effect.mapError((error) =>
