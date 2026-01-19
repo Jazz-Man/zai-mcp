@@ -28,10 +28,17 @@ export class ZaiHttpClient extends Effect.Service<ZaiHttpClient>()(
 			const client = pipe(
 				defaultClient,
 
+				// Prepend the base URL to all requests
 				HttpClient.mapRequest(HttpClientRequest.prependUrl(config.baseUrl)),
+				
+				// Add authentication using the proper bearerToken method
+				HttpClient.mapRequest((request) =>
+					HttpClientRequest.bearerToken(apiKey)(request)
+				),
+				
+				// Set the content type header
 				HttpClient.mapRequest((request) =>
 					HttpClientRequest.setHeaders({
-						Authorization: `Bearer ${apiKey}`,
 						"Content-Type": "application/json",
 					})(request),
 				),
@@ -72,15 +79,7 @@ export class ZaiHttpClient extends Effect.Service<ZaiHttpClient>()(
 										code: String(response.status),
 										message: `HTTP ${response.status}`,
 									} as const),
-								),
-								Effect.mapError(
-									(error) =>
-										new NetworkError({
-											message: `Failed to decode error response: ${String(error)}`,
-											endpoint,
-											cause: error,
-										}),
-								),
+								)
 							);
 
 							return yield* Effect.fail(

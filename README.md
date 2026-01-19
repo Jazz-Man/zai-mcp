@@ -59,23 +59,27 @@ npx @modelcontextprotocol/inspector bun run src/index.ts
 
 ## Available Tools
 
-### 1. webSearchPrime
+### 1. webReader
 
-Search the web with AI-optimized results.
+Read and parse content from a specified URL. Returns the page content, title, description, and metadata.
 
 **Parameters:**
-- `search_query` (string, required): Content to search for
-- `search_domain_filter` (string, optional): Limit results to specific domain
-- `search_recency_filter` (string, optional): Time range filter (`oneDay`, `oneWeek`, `oneMonth`, `oneYear`, `noLimit`)
-- `content_size` (string, optional): Content detail level (`medium`, `high`)
-- `location` (string, optional): User location (`cn`, `us`)
+- `url` (string, required): The URL to read and parse content from
+- `timeout` (number, optional): Request timeout in seconds. Default is 20
+- `no_cache` (boolean, optional): Whether to disable caching (true/false). Default is false
+- `return_format` (string, optional): Return format (e.g., markdown, text). Default is markdown
+- `retain_images` (boolean, optional): Whether to retain images (true/false). Default is true
+- `no_gfm` (boolean, optional): Whether to disable GitHub Flavored Markdown (true/false). Default is false
+- `keep_img_data_url` (boolean, optional): Whether to keep image data URLs (true/false). Default is false
+- `with_images_summary` (boolean, optional): Whether to include image summary (true/false). Default is false
+- `with_links_summary` (boolean, optional): Whether to include links summary (true/false). Default is false
 
 **Example:**
 ```typescript
 {
-  "search_query": "TypeScript best practices 2024",
-  "search_recency_filter": "oneMonth",
-  "content_size": "high"
+  "url": "https://example.com/article",
+  "return_format": "markdown",
+  "retain_images": true
 }
 ```
 
