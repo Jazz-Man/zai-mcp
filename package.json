@@ -17,6 +17,7 @@
     "@effect/ai": "^0.33.2",
     "@effect/platform": "0.94.1",
     "@effect/platform-bun": "^0.87.0",
+    "@effect/platform-node": "0.104.0",
     "effect": "^3.19.14"
   },
   "trustedDependencies": [
