@@ -5,8 +5,10 @@
   "private": true,
   "devDependencies": {
     "@effect/language-service": "^0.67.0",
+    "@effect/vitest": "0.27.0",
     "@tsconfig/bun": "^1.0.10",
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "vitest": "4.0.17"
   },
   "peerDependencies": {
     "typescript": "^5"
@@ -18,6 +20,8 @@
     "effect": "^3.19.14"
   },
   "trustedDependencies": [
-    "@parcel/watcher"
+    "@parcel/watcher",
+    "esbuild",
+    "msgpackr-extract"
   ]
 }
