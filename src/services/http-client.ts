@@ -30,17 +30,10 @@ export class ZaiHttpClient extends Effect.Service<ZaiHttpClient>()(
 
 				// Prepend the base URL to all requests
 				HttpClient.mapRequest(HttpClientRequest.prependUrl(config.baseUrl)),
-				
+
 				// Add authentication using the proper bearerToken method
 				HttpClient.mapRequest((request) =>
 					HttpClientRequest.bearerToken(apiKey)(request)
-				),
-				
-				// Set the content type header
-				HttpClient.mapRequest((request) =>
-					HttpClientRequest.setHeaders({
-						"Content-Type": "application/json",
-					})(request),
 				),
 			);
 
@@ -57,6 +50,7 @@ export class ZaiHttpClient extends Effect.Service<ZaiHttpClient>()(
 						const response = yield* pipe(
 							HttpClientRequest.post(endpoint),
 							HttpClientRequest.schemaBodyJson(Schema.Unknown)(body),
+
 							Effect.flatMap(client.execute),
 							Effect.mapError(
 								(error) =>
