@@ -1,7 +1,5 @@
-import { describe, it, expect } from "@effect/vitest";
-import { Effect, Layer, Redacted, Schema } from "effect";
-import { ZaiHttpClient } from "../src/services/http-client";
-import { ZaiConfigService } from "../src/config";
+import { expect, it } from "@effect/vitest";
+import { Effect, Layer, Redacted } from "effect";
 
 // Тестова конфігурація
 const testConfig = {
@@ -18,10 +16,10 @@ const makeMockHttpClient = (responses: Record<string, any> = {}) => Effect.gen(f
       // Отримуємо шлях запиту
       const url = new URL(request.url);
       const path = url.pathname;
-      
+
       // Повертаємо відповідь залежно від шляху
       const response = responses[path] || { success: true, message: "Test response", id: 123 };
-      
+
       return Effect.succeed({
         status: 200,
         json: () => Promise.resolve(response),

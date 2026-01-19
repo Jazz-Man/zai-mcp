@@ -1,7 +1,4 @@
-import { it, expect } from "@effect/vitest";
-import { Effect, Redacted } from "effect";
-import { ZaiHttpClient } from "../src/services/http-client";
-import { ZaiConfigService } from "../src/config";
+import { expect, it } from "@effect/vitest";
 
 // Тест для перевірки створення HTTP клієнта
 it("should create ZaiHttpClient with proper configuration", () => {

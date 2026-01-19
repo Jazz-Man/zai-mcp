@@ -1,6 +1,5 @@
-import { it, expect } from "@effect/vitest";
-import { Effect, Redacted } from "effect";
-import { ZaiConfigService } from "../src/config";
+import { expect, it } from "@effect/vitest";
+import { Redacted } from "effect";
 
 // Тестова конфігурація
 const testConfig = {

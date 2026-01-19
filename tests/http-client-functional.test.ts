@@ -1,7 +1,5 @@
-import { it, expect } from "@effect/vitest";
-import { Effect, Layer, Redacted } from "effect";
-import { ZaiHttpClient } from "../src/services/http-client";
-import { ZaiConfigService } from "../src/config";
+import { expect, it } from "@effect/vitest";
+import { Redacted } from "effect";
 import * as CommonSchema from "../src/schemas/common";
 
 // Створюємо тестову конфігурацію
