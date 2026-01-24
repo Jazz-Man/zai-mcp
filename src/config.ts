@@ -1,5 +1,4 @@
 import { Config, Effect, Redacted } from "effect";
-import * as Schema from "effect/Schema";
 import { ConfigError } from "./schemas/common";
 
 /**
@@ -66,34 +65,3 @@ export class ZaiConfigService extends Effect.Service<ZaiConfigService>()(
 		}),
 	},
 ) {}
-
-/**
- * Helper to get API key value from config
- */
-export const getApiKey = Effect.map(ZaiConfigService, (config) =>
-	Redacted.value(config.apiKey),
-);
-
-/**
- * Helper to get base URL from config
- */
-export const getBaseUrl = Effect.map(
-	ZaiConfigService,
-	(config) => config.baseUrl,
-);
-
-/**
- * Helper to get timeout from config
- */
-export const getTimeout = Effect.map(
-	ZaiConfigService,
-	(config) => config.timeoutMs,
-);
-
-/**
- * Helper to get max retries from config
- */
-export const getMaxRetries = Effect.map(
-	ZaiConfigService,
-	(config) => config.maxRetries,
-);
