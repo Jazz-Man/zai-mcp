@@ -1,4 +1,4 @@
-import { type Tool, Toolkit } from "@effect/ai";
+import { Toolkit } from "@effect/ai";
 import { Effect, Layer } from "effect";
 import { ZaiHttpClient } from "./services/http-client";
 import { WebReaderTool } from "./tools/web-reader";
@@ -13,7 +13,3 @@ export const ZaiToolkitHandlers = ZaiToolkit.toLayer(
 		};
 	}),
 ).pipe(Layer.provide(ZaiHttpClient.Default));
-
-export type ToolHandler<T extends Tool.Any> = (
-	params: Tool.Parameters<T>,
-) => Effect.Effect<Tool.Success<T>, Tool.Failure<T>, Tool.Requirements<T>>;

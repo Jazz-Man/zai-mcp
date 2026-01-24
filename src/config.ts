@@ -1,15 +1,12 @@
-import { Config, Effect, Redacted } from "effect";
-import { ConfigError } from "./schemas/common";
+import { Config, Effect, Schema } from "effect";
 
-/**
- * Configuration interface for Zai MCP Server
- */
-export interface ZaiConfig {
-	readonly apiKey: Redacted.Redacted;
-	readonly baseUrl: string;
-	readonly timeoutMs: number;
-	readonly maxRetries: number;
-}
+export class ConfigError extends Schema.TaggedError<ConfigError>()(
+	"ConfigError",
+	{
+		message: Schema.String,
+		key: Schema.String,
+	},
+) {}
 
 /**
  * Zai Config Service using Effect.Service pattern
