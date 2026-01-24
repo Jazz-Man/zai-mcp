@@ -54,7 +54,9 @@ export const WebReaderTool = Tool.make("webReader", {
 	},
 });
 
-export const WebReaderHandler = (params: Tool.Parameters<typeof WebReaderTool>) =>
+export const WebReaderHandler = (
+	params: Tool.Parameters<typeof WebReaderTool>,
+) =>
 	Effect.gen(function* () {
 		const client = yield* ZaiHttpClient;
 
