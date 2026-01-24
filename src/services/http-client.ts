@@ -1,106 +1,45 @@
+import * as Tool from "@effect/ai/Tool";
 import {
+	FetchHttpClient,
 	HttpClient,
 	HttpClientRequest,
 	HttpClientResponse,
 } from "@effect/platform";
-import { Effect, pipe, Redacted, Schema } from "effect";
+import { Effect, Redacted } from "effect";
 import { ZaiConfigService } from "../config";
-import * as CommonSchema from "../schemas/common";
 
-// Re-export error types for convenience
-export type NetworkError = CommonSchema.NetworkError;
-export type ApiError = CommonSchema.ApiError;
-export const { NetworkError, ApiError, ApiErrorResponseSchema } = CommonSchema;
+import { WebReaderResponseSchema } from "../schemas/web-reader";
+import type { WebReaderTool } from "../tools/web-reader";
 
-/**
- * HTTP Client Service for Zai API
- * Handles authentication, base URL, and error mapping
- */
 export class ZaiHttpClient extends Effect.Service<ZaiHttpClient>()(
 	"ZaiHttpClient",
 	{
-		dependencies: [ZaiConfigService.Default],
+		dependencies: [FetchHttpClient.layer, ZaiConfigService.Default],
 		effect: Effect.gen(function* () {
 			const config = yield* ZaiConfigService;
 			const apiKey = Redacted.value(config.apiKey);
-			const defaultClient = yield* HttpClient.HttpClient;
 
-			const client = pipe(
-				defaultClient,
-
-				// Prepend the base URL to all requests
+			const httpClient = yield* HttpClient.HttpClient;
+			const httpClientOk = httpClient.pipe(
+				HttpClient.filterStatusOk,
 				HttpClient.mapRequest(HttpClientRequest.prependUrl(config.baseUrl)),
-
-				// Add authentication using the proper bearerToken method
-				HttpClient.mapRequest((request) =>
-					HttpClientRequest.bearerToken(apiKey)(request)
-				),
+				HttpClient.mapRequest(HttpClientRequest.bearerToken(apiKey)),
 			);
 
-			return {
-				/**
-				 * Make a POST request to the Zai API
-				 */
-				post: <A>(
-					endpoint: string,
-					body: unknown,
-					schema: Schema.Schema<A>,
-				): Effect.Effect<A, NetworkError | ApiError, never> =>
-					Effect.gen(function* () {
-						const response = yield* pipe(
-							HttpClientRequest.post(endpoint),
-							HttpClientRequest.schemaBodyJson(Schema.Unknown)(body),
+			const readUrl = Effect.fn("ZaiHttpClientNew.readUrl")(function* (
+				params: Tool.Parameters<typeof WebReaderTool>,
+			) {
+				return yield* HttpClientRequest.post("/coding/paas/v4/reader").pipe(
+					HttpClientRequest.bodyJson(params),
+					Effect.flatMap(httpClientOk.execute),
+					Effect.flatMap(
+						HttpClientResponse.schemaBodyJson(WebReaderResponseSchema),
+					),
+					Effect.orDie,
+				);
+			});
 
-							Effect.flatMap(client.execute),
-							Effect.mapError(
-								(error) =>
-									new NetworkError({
-										message: `HTTP request failed: ${endpoint}`,
-										endpoint,
-										cause: error,
-									}),
-							),
-						);
-
-						// Handle error responses (4xx, 5xx)
-						if (response.status >= 400) {
-							const errorResponse = yield* pipe(
-								HttpClientResponse.schemaBodyJson(ApiErrorResponseSchema)(
-									response,
-								),
-								Effect.catchAll(() =>
-									Effect.succeed({
-										code: String(response.status),
-										message: `HTTP ${response.status}`,
-									} as const),
-								)
-							);
-
-							return yield* Effect.fail(
-								new ApiError({
-									code: errorResponse.code,
-									message: errorResponse.message,
-									endpoint,
-								}),
-							);
-						}
-
-						// Parse successful response
-						const result = yield* pipe(
-							HttpClientResponse.schemaBodyJson(schema)(response),
-							Effect.mapError(
-								(error) =>
-									new NetworkError({
-										message: `Failed to decode response: ${String(error)}`,
-										endpoint,
-										cause: error,
-									}),
-							),
-						);
-
-						return result;
-					}),
-			};
+			return { readUrl } as const;
 		}),
 	},
 ) {}
