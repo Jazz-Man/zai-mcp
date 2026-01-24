@@ -49,45 +49,45 @@ const WebReaderResponseSchema = Schema.Struct({
 
 const WebReaderTool = Tool.make("webReader", {
 	description:
-		"Read and parse content from a specified URL. Returns the page content, title, description, and metadata.",
+		"Fetch and Convert URL to LLM Friendly Input.",
 	success: WebReaderResponseSchema,
 	failure: Schema.Never,
 	parameters: {
 		url: Schema.NonEmptyTrimmedString.annotations({
-			description: "The URL to retrieve",
+			description: "The URL of the website to fetch and read",
 		}),
 		timeout: Schema.optional(Schema.Number).annotations({
-			description: "Request timeout in seconds",
+			description: "Request timeout(unit is second), default is 20",
 			default: 20,
 		}),
 		no_cache: Schema.optional(Schema.Boolean).annotations({
-			description: "Whether to disable caching (true/false)",
+			description: "Disable cache(true/false), default is false",
 			default: false,
 		}),
 		return_format: Schema.optional(
 			Schema.Literal("markdown", "text"),
 		).annotations({
-			description: "Return format (e.g., markdown, text)",
+			description: "Reader response content type (markdown or text), default is markdown",
 			default: "markdown",
 		}),
 		retain_images: Schema.optional(Schema.Boolean).annotations({
-			description: "Whether to retain images (true/false)",
+			description: "Retain images (true/false), default is true",
 			default: true,
 		}),
 		no_gfm: Schema.optional(Schema.Boolean).annotations({
-			description: "Whether to disable GitHub Flavored Markdown (true/false)",
+			description: "Disable GitHub Flavored Markdown (true/false), default is false",
 			default: false,
 		}),
 		keep_img_data_url: Schema.optional(Schema.Boolean).annotations({
-			description: "Whether to keep image data URLs (true/false)",
+			description: "Keep image data URL (true/false), default is false",
 			default: false,
 		}),
 		with_images_summary: Schema.optional(Schema.Boolean).annotations({
-			description: "Whether to include image summary (true/false)",
+			description: "Include images summary (true/false), default is false",
 			default: false,
 		}),
 		with_links_summary: Schema.optional(Schema.Boolean).annotations({
-			description: "Whether to include links summary (true/false)",
+			description: "Include links summary (true/false), default is false",
 			default: false,
 		}),
 	},
