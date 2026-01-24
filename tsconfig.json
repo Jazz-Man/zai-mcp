@@ -13,7 +13,7 @@
 		"resolveJsonModule": true,
 		"isolatedModules": true,
 		"strictNullChecks": true,
-		"exactOptionalPropertyTypes": false,
+		"exactOptionalPropertyTypes": true,
 		"plugins": [
 			{
 				"name": "@effect/language-service",
