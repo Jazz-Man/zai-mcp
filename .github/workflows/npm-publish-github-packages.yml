@@ -38,4 +38,5 @@ jobs:
           registries: |
               @jazzman:https://npm.pkg.github.com/|$GITHUB_TOKEN
       - run: bun install
+      - run: bun run build:bin
       - run: bun publish
