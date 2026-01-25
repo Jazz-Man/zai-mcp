@@ -28,7 +28,7 @@ jobs:
       - name: Configure Bun for GitHub Packages
         run: |
           mkdir -p ~/.bun
-          echo "@jazzman:registry=https://npm.pkg.github.com" > ~/.bun/.npmrc
+          echo "@jazz-man:registry=https://npm.pkg.github.com" > ~/.bun/.npmrc
           echo "//npm.pkg.github.com/:_authToken=\${GITHUB_TOKEN}" >> ~/.bun/.npmrc
 
       - name: Install dependencies
