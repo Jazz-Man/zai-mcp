@@ -1,14 +1,16 @@
 {
-  "name": "zai-mcp",
+  "name": "web-reader-mcp",
   "module": "src/index.ts",
   "type": "module",
   "private": true,
+  "bin": "",
+  "scripts": {
+    "build:bin": "bun build --compile --target=bun-darwin-arm64 --no-compile-autoload-package-json --no-compile-autoload-tsconfig --no-compile-autoload-bunfig --no-compile-autoload-dotenv --minify --sourcemap --production --bytecode src/index.ts --outfile web-reader-mcp"
+  },
   "devDependencies": {
     "@effect/language-service": "^0.67.0",
-    "@effect/vitest": "0.27.0",
     "@tsconfig/bun": "^1.0.10",
-    "@types/bun": "latest",
-    "vitest": "4.0.17"
+    "@types/bun": "latest"
   },
   "peerDependencies": {
     "typescript": "^5"
@@ -17,7 +19,6 @@
     "@effect/ai": "^0.33.2",
     "@effect/platform": "0.94.1",
     "@effect/platform-bun": "^0.87.0",
-    "@effect/platform-node": "0.104.0",
     "effect": "^3.19.14"
   },
   "trustedDependencies": [
