@@ -22,16 +22,10 @@ jobs:
         uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
-
-      - name: Configure Bun for GitHub Packages
-        run: |
-          mkdir -p ~/.bun
-          echo "@jazzman:registry=https://npm.pkg.github.com" > ~/.bun/.npmrc
-          echo "//npm.pkg.github.com/:_authToken=\${GITHUB_TOKEN}" >> ~/.bun/.npmrc
+          registry-url: https://npm.pkg.github.com
+          scope: '@jazz-man'
 
       - name: Install dependencies
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
         run: bun install --frozen-lockfile
 
       - name: Build binary
