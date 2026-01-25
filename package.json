@@ -4,7 +4,6 @@
 	"description": "Z.AI Web Reader MCP Server - A standalone executable for reading web content via Z.AI API",
 	"module": "src/index.ts",
 	"type": "module",
-	"private": true,
 	"bin": {
 		"web-reader-mcp": "./bin/web-reader-mcp"
 	},
