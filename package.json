@@ -8,7 +8,7 @@
 		"web-reader-mcp": "./bin/web-reader-mcp"
 	},
 	"publishConfig": {
-		"registry": "https://npm.pkg.github.com"
+		"registry": "https://npm.pkg.github.com/@jazzman"
 	},
 	"scripts": {
 		"build:bin": "bun build --compile --target=bun-darwin-arm64 --minify --bytecode src/index.ts --outfile bin/web-reader-mcp",
