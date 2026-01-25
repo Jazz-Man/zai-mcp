@@ -1,35 +1,38 @@
 {
-  "name": "web-reader-mcp",
-  "version": "1.0.0",
-  "description": "Z.AI Web Reader MCP Server - A standalone executable for reading web content via Z.AI API",
-  "module": "src/index.ts",
-  "type": "module",
-  "private": true,
-  "bin": {
-    "web-reader-mcp": "./bin/web-reader-mcp"
-  },
-  "scripts": {
-    "build:bin": "bun build --compile --target=bun-darwin-arm64 --minify --bytecode src/index.ts --outfile bin/web-reader-mcp",
-    "dev": "bun run src/index.ts",
-    "typecheck": "bun tsc --noEmit"
-  },
-  "devDependencies": {
-    "@effect/language-service": "^0.67.0",
-    "@tsconfig/bun": "^1.0.10",
-    "@types/bun": "latest"
-  },
-  "peerDependencies": {
-    "typescript": "^5"
-  },
-  "dependencies": {
-    "@effect/ai": "^0.33.2",
-    "@effect/platform": "0.94.1",
-    "@effect/platform-bun": "^0.87.0",
-    "effect": "^3.19.14"
-  },
-  "trustedDependencies": [
-    "@parcel/watcher",
-    "esbuild",
-    "msgpackr-extract"
-  ]
+	"name": "web-reader-mcp",
+	"version": "1.0.0",
+	"description": "Z.AI Web Reader MCP Server - A standalone executable for reading web content via Z.AI API",
+	"module": "src/index.ts",
+	"type": "module",
+	"private": true,
+	"bin": {
+		"web-reader-mcp": "./bin/web-reader-mcp"
+	},
+	"publishConfig": {
+		"registry": "https://npm.pkg.github.com"
+	},
+	"scripts": {
+		"build:bin": "bun build --compile --target=bun-darwin-arm64 --minify --bytecode src/index.ts --outfile bin/web-reader-mcp",
+		"dev": "bun run src/index.ts",
+		"typecheck": "bun tsc --noEmit"
+	},
+	"devDependencies": {
+		"@effect/language-service": "^0.67.0",
+		"@tsconfig/bun": "^1.0.10",
+		"@types/bun": "latest"
+	},
+	"peerDependencies": {
+		"typescript": "^5"
+	},
+	"dependencies": {
+		"@effect/ai": "^0.33.2",
+		"@effect/platform": "0.94.1",
+		"@effect/platform-bun": "^0.87.0",
+		"effect": "^3.19.14"
+	},
+	"trustedDependencies": [
+		"@parcel/watcher",
+		"esbuild",
+		"msgpackr-extract"
+	]
 }
