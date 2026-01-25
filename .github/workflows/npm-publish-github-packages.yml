@@ -1,4 +1,4 @@
-# This workflow will build and publish a package to GitHub Packages when a release is created
+# This workflow will build and publish a package to GitHub Packages
 # For more information see: https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry
 
 name: Publish to GitHub Packages
@@ -7,8 +7,6 @@ on:
   push:
     branches:
       - main
-  release:
-    types: [created]
 
 jobs:
   build-and-publish:
@@ -28,7 +26,7 @@ jobs:
       - name: Configure Bun for GitHub Packages
         run: |
           mkdir -p ~/.bun
-          echo "@jazz-man:registry=https://npm.pkg.github.com" > ~/.bun/.npmrc
+          echo "@jazzman:registry=https://npm.pkg.github.com" > ~/.bun/.npmrc
           echo "//npm.pkg.github.com/:_authToken=\${GITHUB_TOKEN}" >> ~/.bun/.npmrc
 
       - name: Install dependencies
@@ -39,7 +37,22 @@ jobs:
       - name: Build binary
         run: bun run build:bin
 
-      - name: Publish to GitHub Packages
+      - name: Bump version and publish
         env:
           GITHUB_TOKEN: ${{ github.token }}
-        run: bun publish
+        run: |
+          # Get commit hash (short)
+          COMMIT_HASH=$(git rev-parse --short HEAD)
+          
+          # Get commit timestamp
+          COMMIT_DATE=$(git log -1 --format=%ct HEAD)
+          COMMIT_DATETIME=$(date -r $COMMIT_DATE +%Y%m%d.%H%M%S)
+          
+          # Create new version: 1.0.0.{date}.{hash}
+          NEW_VERSION="1.0.0.${COMMIT_DATETIME}.${COMMIT_HASH}"
+          
+          # Update package.json version
+          npm version $NEW_VERSION --no-git-tag-version
+          
+          # Publish to GitHub Packages with --tolerate-republish to avoid errors on re-runs
+          bun publish --tolerate-republish
