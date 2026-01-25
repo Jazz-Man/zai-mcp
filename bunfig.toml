@@ -9,14 +9,8 @@ coverage = false
 [install.lockfile]
 save = true
 
-
-[run]
-# default outside of Windows
-shell = "system"
-# equivalent to `bun --bun` for all `bun run` commands
-bun = true
-silent = true
-
+[install.scopes]
+"@jazzman" = "https://npm.pkg.github.com"
 
 [install]
 exact = true
@@ -24,3 +18,9 @@ optional = true
 dev = true
 peer = true
 auto = "auto"
+
+[publish]
+# GitHub Packages registry for publishing
+registry = "https://npm.pkg.github.com"
+# Always use token from environment
+token = "${GITHUB_TOKEN}"
