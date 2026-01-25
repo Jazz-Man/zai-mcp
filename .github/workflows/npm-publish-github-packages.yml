@@ -24,19 +24,21 @@ jobs:
           BUN_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: bun ci --frozen-lockfile
 
-  # publish-gpr:
-  #   needs: build
-  #   runs-on: ubuntu-latest
-  #   permissions:
-  #     contents: read
-  #     packages: write
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - uses: oven-sh/setup-bun@v2
-  #       with:
-  #         token: ${{ github.token }}
-  #         registries: |
-  #             @jazzman:https://npm.pkg.github.com/|$GITHUB_TOKEN
-  #     - run: bun install --frozen-lockfile
-  #     - run: bun run build:bin
-  #     - run: bun publish
+  publish-gpr:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+          registry-url: https://npm.pkg.github.com
+          scope: '@jazzman'
+        env:
+          BUN_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: bun install --frozen-lockfile
+      - run: bun run build:bin
+      # - run: bun publish
