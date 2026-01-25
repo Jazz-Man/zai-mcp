@@ -1,11 +1,17 @@
 {
   "name": "web-reader-mcp",
+  "version": "1.0.0",
+  "description": "Z.AI Web Reader MCP Server - A standalone executable for reading web content via Z.AI API",
   "module": "src/index.ts",
   "type": "module",
   "private": true,
-  "bin": "",
+  "bin": {
+    "web-reader-mcp": "./bin/web-reader-mcp"
+  },
   "scripts": {
-    "build:bin": "bun build --compile --target=bun-darwin-arm64 --no-compile-autoload-package-json --no-compile-autoload-tsconfig --no-compile-autoload-bunfig --no-compile-autoload-dotenv --minify --sourcemap --production --bytecode src/index.ts --outfile web-reader-mcp"
+    "build:bin": "bun build --compile --target=bun-darwin-arm64 --minify --bytecode src/index.ts --outfile bin/web-reader-mcp",
+    "dev": "bun run src/index.ts",
+    "typecheck": "bun tsc --noEmit"
   },
   "devDependencies": {
     "@effect/language-service": "^0.67.0",
