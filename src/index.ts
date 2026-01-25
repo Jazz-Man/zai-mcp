@@ -22,10 +22,10 @@ import { Config, Effect, Layer, Redacted, Schema } from "effect";
 // Schema
 // ============================================================================
 
-const UnknownSchema = Schema.Record({
+const UnknownSchema = Schema.optional(Schema.Record({
 	key: Schema.String,
 	value: Schema.Unknown,
-});
+}));
 
 const WebReaderResponseSchema = Schema.Struct({
 	id: Schema.String,
@@ -37,9 +37,9 @@ const WebReaderResponseSchema = Schema.Struct({
 		description: Schema.optional(Schema.String),
 		title: Schema.optional(Schema.String),
 		url: Schema.optional(Schema.String),
-		metadata: Schema.optional(UnknownSchema),
-		external: Schema.optional(UnknownSchema),
-		images: Schema.optional(UnknownSchema),
+		metadata: UnknownSchema,
+		external: UnknownSchema,
+		images: UnknownSchema,
 	}),
 });
 
@@ -72,7 +72,7 @@ const WebReaderTool = Tool.make("webReader", {
 		}),
 		retain_images: Schema.optional(Schema.Boolean).annotations({
 			description: "Retain images (true/false), default is true",
-			default: true,
+			default: false,
 		}),
 		no_gfm: Schema.optional(Schema.Boolean).annotations({
 			description: "Disable GitHub Flavored Markdown (true/false), default is false",
