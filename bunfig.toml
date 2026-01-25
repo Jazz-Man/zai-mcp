@@ -10,7 +10,7 @@ coverage = false
 save = true
 
 [install.scopes]
-"@jazzman" = "https://npm.pkg.github.com"
+"@jazz-man" = "https://npm.pkg.github.com"
 
 [install]
 exact = true
