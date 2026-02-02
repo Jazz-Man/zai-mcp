@@ -8,24 +8,32 @@
  * tool definition, handlers, and server setup in one place.
  */
 
-import { McpServer, Tool, Toolkit } from "@effect/ai";
-import {
-	FetchHttpClient,
-	HttpClient,
-	HttpClientRequest,
-	HttpClientResponse,
-} from "@effect/platform";
-import { BunRuntime, BunSink, BunStream } from "@effect/platform-bun";
-import { Config, Effect, Layer, Redacted, Schema } from "effect";
+import * as McpServer from "@effect/ai/McpServer";
+import * as Tool from "@effect/ai/Tool";
+import * as Toolkit from "@effect/ai/Toolkit";
+import * as FetchHttpClient from "@effect/platform/FetchHttpClient";
+import * as HttpClient from "@effect/platform/HttpClient";
+import * as HttpClientRequest from "@effect/platform/HttpClientRequest";
+import * as HttpClientResponse from "@effect/platform/HttpClientResponse";
+import * as BunRuntime from "@effect/platform-bun/BunRuntime";
+import * as BunSink from "@effect/platform-bun/BunSink";
+import * as BunStream from "@effect/platform-bun/BunStream";
+import * as Config from "effect/Config";
+import * as Effect from "effect/Effect";
+import * as Layer from "effect/Layer";
+import * as Redacted from "effect/Redacted";
+import * as Schema from "effect/Schema";
 
 // ============================================================================
 // Schema
 // ============================================================================
 
-const UnknownSchema = Schema.optional(Schema.Record({
-	key: Schema.String,
-	value: Schema.Unknown,
-}));
+const UnknownSchema = Schema.optional(
+	Schema.Record({
+		key: Schema.String,
+		value: Schema.Unknown,
+	}),
+);
 
 const WebReaderResponseSchema = Schema.Struct({
 	id: Schema.String,
@@ -48,8 +56,7 @@ const WebReaderResponseSchema = Schema.Struct({
 // ============================================================================
 
 const WebReaderTool = Tool.make("webReader", {
-	description:
-		"Fetch and Convert URL to LLM Friendly Input.",
+	description: "Fetch and Convert URL to LLM Friendly Input.",
 	success: WebReaderResponseSchema,
 	failure: Schema.Never,
 	parameters: {
@@ -67,7 +74,8 @@ const WebReaderTool = Tool.make("webReader", {
 		return_format: Schema.optional(
 			Schema.Literal("markdown", "text"),
 		).annotations({
-			description: "Reader response content type (markdown or text), default is markdown",
+			description:
+				"Reader response content type (markdown or text), default is markdown",
 			default: "markdown",
 		}),
 		retain_images: Schema.optional(Schema.Boolean).annotations({
@@ -75,7 +83,8 @@ const WebReaderTool = Tool.make("webReader", {
 			default: false,
 		}),
 		no_gfm: Schema.optional(Schema.Boolean).annotations({
-			description: "Disable GitHub Flavored Markdown (true/false), default is false",
+			description:
+				"Disable GitHub Flavored Markdown (true/false), default is false",
 			default: false,
 		}),
 		keep_img_data_url: Schema.optional(Schema.Boolean).annotations({
