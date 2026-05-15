@@ -5,8 +5,7 @@ import * as BunRuntime from "@effect/platform-bun/BunRuntime";
 import * as BunSink from "@effect/platform-bun/BunSink";
 import * as BunStream from "@effect/platform-bun/BunStream";
 import * as Layer from "effect/Layer";
-import { ZaiToolkitHandlers } from "../src/index.ts";
-import { ZaiToolkit } from "../src/toolkit.ts";
+import { ZaiToolkit, ZaiToolkitHandlers } from "../src/index.ts";
 
 // ============================================================================
 // Server Layer

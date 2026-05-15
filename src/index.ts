@@ -8,6 +8,7 @@
  * tool definition, handlers, and server setup in one place.
  */
 
+import * as Toolkit from "@effect/ai/Toolkit";
 import * as FetchHttpClient from "@effect/platform/FetchHttpClient";
 import * as HttpClient from "@effect/platform/HttpClient";
 import * as HttpClientRequest from "@effect/platform/HttpClientRequest";
@@ -20,8 +21,9 @@ import {
 	WebReaderResponseSchema,
 	type WebReaderResponseType,
 } from "./schema.ts";
-import type { WebReaderToolParameters } from "./tool.ts";
-import { ZaiToolkit } from "./toolkit.ts";
+import { WebReaderTool, type WebReaderToolParameters } from "./tool.ts";
+
+export const ZaiToolkit = Toolkit.make(WebReaderTool);
 
 export const ZaiToolkitHandlers = ZaiToolkit.toLayer(
 	Effect.gen(function* () {
