@@ -36,6 +36,9 @@ jobs:
       - name: Run Biome
         run: biome ci
 
+      - name: Build binary
+        run: bun run build
+
       - name: Bump version and push tag
         uses: anothrNick/github-tag-action@v1
         id: bump
@@ -74,4 +77,5 @@ jobs:
 
           bun publish \
             --tolerate-republish \
-            --production
+            --production \
+            --verbose
