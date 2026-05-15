@@ -20,15 +20,26 @@ A high-performance, standalone MCP server that provides intelligent web content 
 
 ### Installation
 
+This package is published to [GitHub Packages](https://npm.pkg.github.com), not the public npm registry.
+
+Add this line to your project's `.npmrc` (or `~/.npmrc` for global access):
+
+```
+@jazz-man:registry=https://npm.pkg.github.com
+```
+
+Then install:
+
 ```bash
-# Clone the repository
+bun install @jazz-man/web-reader-mcp
+```
+
+To build from source:
+
+```bash
 git clone https://github.com/yourusername/zai-mcp.git
 cd zai-mcp
-
-# Install dependencies
 bun install
-
-# Build standalone executable
 bun run build:bin
 
 # The binary will be created at: bin/web-reader-mcp
