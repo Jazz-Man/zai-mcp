@@ -1,28 +1,26 @@
 {
 	"$schema": "https://json.schemastore.org/tsconfig",
-	"display": "app base tsconfig",
-	"extends": "@tsconfig/bun",
 	"compilerOptions": {
-		"preserveSymlinks": true,
-
-		"downlevelIteration": true,
-		"forceConsistentCasingInFileNames": true,
 		"allowJs": true,
-
+		"downlevelIteration": true,
 		"esModuleInterop": true,
-		"resolveJsonModule": true,
-		"isolatedModules": true,
-		"strictNullChecks": true,
 		"exactOptionalPropertyTypes": true,
+		"forceConsistentCasingInFileNames": true,
+		"isolatedModules": true,
 		"plugins": [
 			{
-				"name": "@effect/language-service",
-				"diagnostics": true,
-				"quickinfo": true,
 				"completions": true,
-				"multipleEffectCheck": true
+				"diagnostics": true,
+				"multipleEffectCheck": true,
+				"name": "@effect/language-service",
+				"quickinfo": true
 			}
-		]
+		],
+		"preserveSymlinks": false,
+		"resolveJsonModule": true,
+		"strictNullChecks": true
 	},
-	"exclude": ["node_modules"]
+	"display": "app base tsconfig",
+	"exclude": ["node_modules"],
+	"extends": "@tsconfig/bun"
 }
