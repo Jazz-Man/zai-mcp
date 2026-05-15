@@ -36,19 +36,19 @@ const UnknownSchema = Schema.optional(
 );
 
 const WebReaderResponseSchema = Schema.Struct({
-	id: Schema.String,
 	created: Schema.Number,
-	request_id: Schema.optional(Schema.String),
+	id: Schema.String,
 	model: Schema.String,
 	reader_result: Schema.Struct({
 		content: Schema.String,
 		description: Schema.optional(Schema.String),
-		title: Schema.optional(Schema.String),
-		url: Schema.optional(Schema.String),
-		metadata: UnknownSchema,
 		external: UnknownSchema,
 		images: UnknownSchema,
+		metadata: UnknownSchema,
+		title: Schema.optional(Schema.String),
+		url: Schema.optional(Schema.String),
 	}),
+	request_id: Schema.optional(Schema.String),
 });
 
 // ============================================================================
@@ -57,49 +57,49 @@ const WebReaderResponseSchema = Schema.Struct({
 
 const WebReaderTool = Tool.make("webReader", {
 	description: "Fetch and Convert URL to LLM Friendly Input.",
-	success: WebReaderResponseSchema,
 	failure: Schema.Never,
 	parameters: {
-		url: Schema.NonEmptyTrimmedString.annotations({
-			description: "The URL of the website to fetch and read",
-		}),
-		timeout: Schema.optional(Schema.Number).annotations({
-			description: "Request timeout(unit is second), default is 20",
-			default: 20,
+		keep_img_data_url: Schema.optional(Schema.Boolean).annotations({
+			default: false,
+			description: "Keep image data URL (true/false), default is false",
 		}),
 		no_cache: Schema.optional(Schema.Boolean).annotations({
-			description: "Disable cache(true/false), default is false",
 			default: false,
+			description: "Disable cache(true/false), default is false",
+		}),
+		no_gfm: Schema.optional(Schema.Boolean).annotations({
+			default: false,
+			description:
+				"Disable GitHub Flavored Markdown (true/false), default is false",
+		}),
+		retain_images: Schema.optional(Schema.Boolean).annotations({
+			default: false,
+			description: "Retain images (true/false), default is true",
 		}),
 		return_format: Schema.optional(
 			Schema.Literal("markdown", "text"),
 		).annotations({
+			default: "markdown",
 			description:
 				"Reader response content type (markdown or text), default is markdown",
-			default: "markdown",
 		}),
-		retain_images: Schema.optional(Schema.Boolean).annotations({
-			description: "Retain images (true/false), default is true",
-			default: false,
+		timeout: Schema.optional(Schema.Number).annotations({
+			default: 20,
+			description: "Request timeout(unit is second), default is 20",
 		}),
-		no_gfm: Schema.optional(Schema.Boolean).annotations({
-			description:
-				"Disable GitHub Flavored Markdown (true/false), default is false",
-			default: false,
-		}),
-		keep_img_data_url: Schema.optional(Schema.Boolean).annotations({
-			description: "Keep image data URL (true/false), default is false",
-			default: false,
+		url: Schema.NonEmptyTrimmedString.annotations({
+			description: "The URL of the website to fetch and read",
 		}),
 		with_images_summary: Schema.optional(Schema.Boolean).annotations({
-			description: "Include images summary (true/false), default is false",
 			default: false,
+			description: "Include images summary (true/false), default is false",
 		}),
 		with_links_summary: Schema.optional(Schema.Boolean).annotations({
-			description: "Include links summary (true/false), default is false",
 			default: false,
+			description: "Include links summary (true/false), default is false",
 		}),
 	},
+	success: WebReaderResponseSchema,
 });
 
 // ============================================================================
@@ -155,9 +155,9 @@ const ServerLayer = Layer.mergeAll(McpServer.toolkit(ZaiToolkit)).pipe(
 	Layer.provide(
 		McpServer.layerStdio({
 			name: "Z.AI Web Reader MCP Server",
-			version: "1.0.0",
 			stdin: BunStream.stdin,
 			stdout: BunSink.stdout,
+			version: "1.0.0",
 		}),
 	),
 );
