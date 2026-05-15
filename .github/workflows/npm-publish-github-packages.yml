@@ -73,7 +73,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
-          bun pm version ${{ steps.bump.outputs.tag }} --no-git-tag-version
+          TAG="${{ steps.bump.outputs.tag }}"
+          bun pm version "${TAG#v}" --no-git-tag-version
 
           bun publish \
             --tolerate-republish \
