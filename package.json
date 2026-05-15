@@ -13,14 +13,18 @@
 	},
 	"description": "Z.AI Web Reader MCP Server - A standalone executable for reading web content via Z.AI API",
 	"devDependencies": {
-		"@effect/language-service": "^0.67.0",
-		"@tsconfig/bun": "^1.0.10",
-		"@types/bun": "latest"
+		"@effect/language-service": "0.86.1",
+		"@tsconfig/bun": "1.0.10",
+		"@types/bun": "1.3.14"
+	},
+	"engines": {
+		"bun": "^1.0.10"
 	},
 	"homepage": "https://github.com/Jazz-Man/web-reader-mcp#readme",
 	"license": "MIT",
 	"module": "src/index.ts",
 	"name": "@jazz-man/web-reader-mcp",
+	"packageManager": "bun@1.0.10",
 	"peerDependencies": {
 		"typescript": "^5"
 	},
