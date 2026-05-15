@@ -39,7 +39,7 @@
 		"url": "git+https://github.com/Jazz-Man/web-reader-mcp.git"
 	},
 	"scripts": {
-		"build:bin": "bun build --compile --target=bun --minify --bytecode src/index.ts --outfile bin/web-reader-mcp",
+		"build": "bun build --compile --target=bun --minify --bytecode src/index.ts --outfile bin/web-reader-mcp",
 		"dev": "bun run src/index.ts",
 		"typecheck": "bun tsc --noEmit"
 	},
