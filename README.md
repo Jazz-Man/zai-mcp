@@ -1,4 +1,4 @@
-# Z.AI Web Reader MCP Server
+# Web Search and Web Reader MCP Server
 
 A high-performance, standalone MCP server that provides intelligent web content extraction capabilities using Z.AI API. Built with Effect TypeScript and Bun for maximum performance and type safety.
 
