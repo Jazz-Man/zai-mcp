@@ -9,38 +9,38 @@ export const WebReaderParamsSchema = Schema.Struct({
 		default: false,
 		description: "Keep image data URL (true/false), default is false",
 	}),
-	no_cache: Schema.optional(Schema.Boolean).annotateKey({
+	no_cache: Schema.optional(Schema.Boolean).annotate({
 		default: false,
 		description: "Disable cache(true/false), default is false",
 	}),
-	no_gfm: Schema.optional(Schema.Boolean).annotateKey({
+	no_gfm: Schema.optional(Schema.Boolean).annotate({
 		default: false,
 		description:
 			"Disable GitHub Flavored Markdown (true/false), default is false",
 	}),
-	retain_images: Schema.optional(Schema.Boolean).annotateKey({
+	retain_images: Schema.optional(Schema.Boolean).annotate({
 		default: false,
 		description: "Retain images (true/false), default is true",
 	}),
 	return_format: Schema.optional(
 		Schema.Literals(["markdown", "text"]),
-	).annotateKey({
+	).annotate({
 		default: "markdown",
 		description:
 			"Reader response content type (markdown or text), default is markdown",
 	}),
-	timeout: Schema.optional(Schema.Finite).annotateKey({
+	timeout: Schema.optional(Schema.Finite).annotate({
 		default: 20,
 		description: "Request timeout(unit is second), default is 20",
 	}),
-	url: Schema.Trimmed.check(Schema.isNonEmpty()).annotateKey({
+	url: Schema.Trimmed.check(Schema.isNonEmpty()).annotate({
 		description: "The URL of the website to fetch and read",
 	}),
-	with_images_summary: Schema.optional(Schema.Boolean).annotateKey({
+	with_images_summary: Schema.optional(Schema.Boolean).annotate({
 		default: false,
 		description: "Include images summary (true/false), default is false",
 	}),
-	with_links_summary: Schema.optional(Schema.Boolean).annotateKey({
+	with_links_summary: Schema.optional(Schema.Boolean).annotate({
 		default: false,
 		description: "Include links summary (true/false), default is false",
 	}),
