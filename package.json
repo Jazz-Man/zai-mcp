@@ -6,8 +6,6 @@
 		"url": "https://github.com/Jazz-Man/web-reader-mcp/issues"
 	},
 	"dependencies": {
-		"@effect/ai": "^0.33.2",
-		"@effect/platform": "0.94.1",
 		"@effect/platform-bun": "4.0.0-beta.107",
 		"effect": "4.0.0-beta.107"
 	},

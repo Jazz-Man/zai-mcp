@@ -3,5 +3,8 @@
 biome.json
 CLAUDE.md
 tsconfig.json
+skills-lock.json
+.zed
+.agents
 *.bun-build
 .gitkeep
