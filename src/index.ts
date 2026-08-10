@@ -52,7 +52,6 @@ export const ZaiToolkitHandlers = ZaiToolkit.toLayer(
 					Effect.flatMap(
 						HttpClientResponse.schemaBodyJson(WebReaderResponseSchema),
 					),
-					Effect.orDie,
 				),
 		};
 	}),

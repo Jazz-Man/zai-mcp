@@ -4,7 +4,8 @@ import { WebReaderParamsSchema, WebReaderResponseSchema } from "./schema.ts";
 
 export const WebReaderTool = Tool.make("webReader", {
 	description: "Fetch and Convert URL to LLM Friendly Input.",
-	failure: Schema.Never,
+	failure: Schema.Any,
+	failureMode: "error",
 	parameters: WebReaderParamsSchema,
 	success: WebReaderResponseSchema,
 })
