@@ -1,0 +1,37 @@
+{
+	"languages": {
+		"JavaScript": {
+			"code_actions_on_format": {
+				"source.action.useSortedKeys.biome": true,
+				"source.action.useSortedProperties.biome": true,
+				"source.fixAll.biome": true,
+				"source.organizeImports.biome": true
+			},
+			"formatter": { "language_server": { "name": "biome" } },
+			"language_servers": ["effect-tsgo", "biome", "!typescript-ls"]
+		},
+		"TSX": {
+			"language_servers": [
+				"effect-tsgo",
+				"biome",
+				"!typescript-ls",
+				"!vtsls",
+				"!typescript-language-server",
+				"..."
+			]
+		},
+		"TypeScript": {
+			"language_servers": [
+				"effect-tsgo",
+				"biome",
+				"!typescript-ls",
+				"!vtsls",
+				"!typescript-language-server",
+				"..."
+			]
+		}
+	},
+	"lsp": {
+		"effect-tsgo": {}
+	}
+}
