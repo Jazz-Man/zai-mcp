@@ -8,24 +8,21 @@
  * tool definition, handlers, and server setup in one place.
  */
 
-import * as McpServer from "@effect/ai/McpServer";
-import * as Toolkit from "@effect/ai/Toolkit";
-import * as FetchHttpClient from "@effect/platform/FetchHttpClient";
-import * as HttpClient from "@effect/platform/HttpClient";
-import * as HttpClientRequest from "@effect/platform/HttpClientRequest";
-import * as HttpClientResponse from "@effect/platform/HttpClientResponse";
 import * as BunRuntime from "@effect/platform-bun/BunRuntime";
-import * as BunSink from "@effect/platform-bun/BunSink";
-import * as BunStream from "@effect/platform-bun/BunStream";
+import * as BunStdio from "@effect/platform-bun/BunStdio";
 import * as Config from "effect/Config";
 import * as Effect from "effect/Effect";
 import * as Layer from "effect/Layer";
 import * as Redacted from "effect/Redacted";
-import {
-	WebReaderResponseSchema,
-	type WebReaderResponseType,
-} from "./schema.ts";
-import { WebReaderTool, type WebReaderToolParameters } from "./tool.ts";
+import * as McpProtocol from "effect/unstable/ai/McpProtocol";
+import * as McpServer from "effect/unstable/ai/McpServer";
+import * as Toolkit from "effect/unstable/ai/Toolkit";
+import * as FetchHttpClient from "effect/unstable/http/FetchHttpClient";
+import * as HttpClient from "effect/unstable/http/HttpClient";
+import * as HttpClientRequest from "effect/unstable/http/HttpClientRequest";
+import * as HttpClientResponse from "effect/unstable/http/HttpClientResponse";
+import { WebReaderResponseSchema } from "./schema.ts";
+import { WebReaderTool } from "./tool.ts";
 
 export const ZaiToolkit = Toolkit.make(WebReaderTool);
 
@@ -47,19 +44,17 @@ export const ZaiToolkitHandlers = ZaiToolkit.toLayer(
 			),
 		);
 
-		// Handler function
-		const webReader = (params: WebReaderToolParameters) => {
-			return HttpClientRequest.post("/coding/paas/v4/reader").pipe(
-				HttpClientRequest.bodyJson(params),
-				Effect.flatMap(httpClientOk.execute),
-				Effect.flatMap(
-					HttpClientResponse.schemaBodyJson(WebReaderResponseSchema),
+		return {
+			webReader: (params) =>
+				HttpClientRequest.post("/coding/paas/v4/reader").pipe(
+					HttpClientRequest.bodyJson(params),
+					Effect.flatMap(httpClientOk.execute),
+					Effect.flatMap(
+						HttpClientResponse.schemaBodyJson(WebReaderResponseSchema),
+					),
+					Effect.orDie,
 				),
-				Effect.orDie,
-			) as Effect.Effect<WebReaderResponseType, never, never>;
 		};
-
-		return { webReader };
 	}),
 ).pipe(Layer.provide(FetchHttpClient.layer));
 
@@ -67,20 +62,16 @@ export const ZaiToolkitHandlers = ZaiToolkit.toLayer(
 // Server Layer
 // ============================================================================
 
-export const ServerLayer = Layer.mergeAll(McpServer.toolkit(ZaiToolkit)).pipe(
+export const ServerLayer = McpServer.toolkit(ZaiToolkit).pipe(
 	Layer.provide(ZaiToolkitHandlers),
 	Layer.provide(
 		McpServer.layerStdio({
 			name: "Z.AI Web Reader MCP Server",
-			stdin: BunStream.stdin,
-			stdout: BunSink.stdout,
+			protocols: [McpProtocol.v2025_06_18],
 			version: "1.0.0",
 		}),
 	),
+	Layer.provide(BunStdio.layer),
 );
-
-// ============================================================================
-// Launch
-// ============================================================================
 
 Layer.launch(ServerLayer).pipe(BunRuntime.runMain);
