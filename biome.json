@@ -1,43 +1,66 @@
 {
-	"$schema": "https://biomejs.dev/schemas/2.5.7/schema.json",
-	"assist": {
-		"actions": {
-			"source": {
-				"noDuplicateClasses": "on",
-				"organizeImports": "on",
-				"useSortedAttributes": "on",
-				"useSortedInterfaceMembers": "on",
-				"useSortedKeys": "on",
-				"useSortedProperties": "on"
-			}
-		},
-		"enabled": true
-	},
-	"files": {
-		"ignoreUnknown": false,
-		"includes": ["**", "!skills-lock.json"]
-	},
-	"formatter": {
-		"enabled": true,
-		"indentStyle": "tab"
-	},
-	"javascript": {
-		"formatter": {
-			"quoteStyle": "double"
-		}
-	},
-	"linter": {
-		"domains": {
-			"project": "all"
-		},
-		"enabled": true,
-		"rules": {
-			"preset": "recommended"
-		}
-	},
-	"vcs": {
-		"clientKind": "git",
-		"enabled": true,
-		"useIgnoreFile": true
-	}
+  "$schema": "https://biomejs.dev/schemas/2.6.4/schema.json",
+  "assist": {
+    "actions": {
+      "source": {
+        "noDuplicateClasses": "on",
+        "organizeImports": "on",
+        "useSortedAttributes": "on",
+        "useSortedEnumMembers": "on",
+        "useSortedInterfaceMembers": "on",
+        "useSortedKeys": "on",
+        "useSortedProperties": "on",
+        "useSortedSelectionSet": "on",
+        "useSortedTypeFields": "on"
+      }
+    },
+    "enabled": true
+  },
+  "files": {
+    "ignoreUnknown": false,
+    "includes": ["**", "!skills-lock.json"]
+  },
+  "formatter": {
+    "attributePosition": "multiline",
+    "enabled": true,
+    "expand": "auto",
+    "formatWithErrors": false,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineEnding": "lf",
+    "trailingNewline": true
+  },
+  "javascript": {
+    "formatter": {
+      "arrowParentheses": "always",
+      "jsxQuoteStyle": "double",
+      "operatorLinebreak": "after",
+      "quoteStyle": "double"
+    },
+    "globals": ["Bun"]
+  },
+  "linter": {
+    "domains": {
+      "project": "all",
+      "test": "all",
+      "types": "all"
+    },
+    "enabled": true,
+    "rules": {
+      "preset": "recommended"
+    }
+  },
+  "markdown": {
+    "formatter": {
+      "enabled": false
+    },
+    "linter": {
+      "enabled": false
+    }
+  },
+  "vcs": {
+    "clientKind": "git",
+    "enabled": true,
+    "useIgnoreFile": true
+  }
 }
