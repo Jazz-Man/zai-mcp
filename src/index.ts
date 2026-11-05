@@ -27,34 +27,34 @@ import { WebReaderTool } from "./tool.ts";
 export const ZaiToolkit = Toolkit.make(WebReaderTool);
 
 export const ZaiToolkitHandlers = ZaiToolkit.toLayer(
-	Effect.gen(function* () {
-		// Get configuration
-		const apiKey = yield* Config.redacted("Z_AI_API_KEY");
-		const baseUrl = yield* Config.string("ZAI_BASE_URL").pipe(
-			Config.withDefault("https://api.z.ai/api"),
-		);
+  Effect.gen(function* () {
+    // Get configuration
+    const apiKey = yield* Config.redacted("Z_AI_API_KEY");
+    const baseUrl = yield* Config.string("ZAI_BASE_URL").pipe(
+      Config.withDefault("https://api.z.ai/api"),
+    );
 
-		// Setup HTTP client
-		const httpClient = yield* HttpClient.HttpClient;
-		const httpClientOk = httpClient.pipe(
-			HttpClient.filterStatusOk,
-			HttpClient.mapRequest(HttpClientRequest.prependUrl(baseUrl)),
-			HttpClient.mapRequest(
-				HttpClientRequest.bearerToken(Redacted.value(apiKey)),
-			),
-		);
+    // Setup HTTP client
+    const httpClient = yield* HttpClient.HttpClient;
+    const httpClientOk = httpClient.pipe(
+      HttpClient.filterStatusOk,
+      HttpClient.mapRequest(HttpClientRequest.prependUrl(baseUrl)),
+      HttpClient.mapRequest(
+        HttpClientRequest.bearerToken(Redacted.value(apiKey)),
+      ),
+    );
 
-		return {
-			webReader: (params) =>
-				HttpClientRequest.post("/coding/paas/v4/reader").pipe(
-					HttpClientRequest.bodyJson(params),
-					Effect.flatMap(httpClientOk.execute),
-					Effect.flatMap(
-						HttpClientResponse.schemaBodyJson(WebReaderResponseSchema),
-					),
-				),
-		};
-	}),
+    return {
+      webReader: (params) =>
+        HttpClientRequest.post("/coding/paas/v4/reader").pipe(
+          HttpClientRequest.bodyJson(params),
+          Effect.flatMap(httpClientOk.execute),
+          Effect.flatMap(
+            HttpClientResponse.schemaBodyJson(WebReaderResponseSchema),
+          ),
+        ),
+    };
+  }),
 ).pipe(Layer.provide(FetchHttpClient.layer));
 
 // ============================================================================
@@ -62,15 +62,15 @@ export const ZaiToolkitHandlers = ZaiToolkit.toLayer(
 // ============================================================================
 
 export const ServerLayer = McpServer.toolkit(ZaiToolkit).pipe(
-	Layer.provide(ZaiToolkitHandlers),
-	Layer.provide(
-		McpServer.layerStdio({
-			name: "Z.AI Web Reader MCP Server",
-			protocols: [McpProtocol.v2025_06_18],
-			version: "1.0.0",
-		}),
-	),
-	Layer.provide(BunStdio.layer),
+  Layer.provide(ZaiToolkitHandlers),
+  Layer.provide(
+    McpServer.layerStdio({
+      name: "Z.AI Web Reader MCP Server",
+      protocols: [McpProtocol.v2025_06_18],
+      version: "1.0.0",
+    }),
+  ),
+  Layer.provide(BunStdio.layer),
 );
 
 Layer.launch(ServerLayer).pipe(BunRuntime.runMain);

@@ -1,35 +1,35 @@
 {
-	"$schema": "./node_modules/@effect/tsgo/schema.json",
-	"compilerOptions": {
-		"exactOptionalPropertyTypes": false,
-		"forceConsistentCasingInFileNames": true,
-		"isolatedModules": true,
-		"plugins": [
-			{
-				"completions": true,
-				"diagnosticSeverity": {
-					"anyUnknownInErrorContext": "warning",
-					"catchUnfailableEffect": "warning",
-					"cryptoRandomUUID": "suggestion",
-					"cryptoRandomUUIDInEffect": "suggestion",
-					"extendsNativeError": "suggestion",
-					"leakingRequirements": "warning",
-					"outdatedApi": "error",
-					"processEnv": "suggestion",
-					"processEnvInEffect": "suggestion",
-					"returnEffectInGen": "warning"
-				},
-				"diagnostics": true,
-				"name": "@effect/language-service",
-				"quickinfo": true
-			}
-		],
-		"preserveSymlinks": false,
-		"resolveJsonModule": true,
-		"rewriteRelativeImportExtensions": true,
-		"strictNullChecks": true
-	},
-	"display": "app base tsconfig",
-	"exclude": ["node_modules"],
-	"extends": "@tsconfig/bun"
+  "$schema": "./node_modules/@effect/tsgo/schema.json",
+  "compilerOptions": {
+    "exactOptionalPropertyTypes": false,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
+    "plugins": [
+      {
+        "completions": true,
+        "diagnosticSeverity": {
+          "anyUnknownInErrorContext": "warning",
+          "catchUnfailableEffect": "warning",
+          "cryptoRandomUUID": "suggestion",
+          "cryptoRandomUUIDInEffect": "suggestion",
+          "extendsNativeError": "suggestion",
+          "leakingRequirements": "warning",
+          "outdatedApi": "error",
+          "processEnv": "suggestion",
+          "processEnvInEffect": "suggestion",
+          "returnEffectInGen": "warning"
+        },
+        "diagnostics": true,
+        "name": "@effect/language-service",
+        "quickinfo": true
+      }
+    ],
+    "preserveSymlinks": false,
+    "resolveJsonModule": true,
+    "rewriteRelativeImportExtensions": true,
+    "strictNullChecks": true
+  },
+  "display": "app base tsconfig",
+  "exclude": ["node_modules"],
+  "extends": "@tsconfig/bun"
 }

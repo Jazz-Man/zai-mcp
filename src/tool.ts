@@ -3,13 +3,13 @@ import * as Tool from "effect/unstable/ai/Tool";
 import { WebReaderParamsSchema, WebReaderResponseSchema } from "./schema.ts";
 
 export const WebReaderTool = Tool.make("webReader", {
-	description: "Fetch and Convert URL to LLM Friendly Input.",
-	failure: Schema.Any,
-	failureMode: "error",
-	parameters: WebReaderParamsSchema,
-	success: WebReaderResponseSchema,
+  description: "Fetch and Convert URL to LLM Friendly Input.",
+  failure: Schema.Any,
+  failureMode: "error",
+  parameters: WebReaderParamsSchema,
+  success: WebReaderResponseSchema,
 })
-	.annotate(Tool.Idempotent, false)
-	.annotate(Tool.OpenWorld, true)
-	.annotate(Tool.Readonly, true)
-	.annotate(Tool.Destructive, false);
+  .annotate(Tool.Idempotent, false)
+  .annotate(Tool.OpenWorld, true)
+  .annotate(Tool.Readonly, true)
+  .annotate(Tool.Destructive, false);
