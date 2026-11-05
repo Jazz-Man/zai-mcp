@@ -37,7 +37,7 @@
     "url": "git+https://github.com/Jazz-Man/web-reader-mcp.git"
   },
   "scripts": {
-    "build": "bun build --check --compile --production --target=bun-darwin-arm64 --no-compile-autoload-bunfig --compile-autoload-dotenv --minify ./src/index.ts --outfile=./bin/web-reader-mcp",
+    "build": "bun build --compile --production --target=bun-darwin-arm64 --no-compile-autoload-bunfig --compile-autoload-dotenv --minify ./src/index.ts --outfile=./bin/web-reader-mcp",
     "dev": "bun run src/index.ts",
     "lint:check": "biome check",
     "lint:fix": "biome check --fix",
